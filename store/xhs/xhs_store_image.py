@@ -18,8 +18,8 @@ from typing import Dict
 
 import aiofiles
 
-from base.base_crawler import AbstractStoreImage
-from tools import utils
+from spider.MediaCrawler.base.base_crawler import AbstractStoreImage
+from spider.MediaCrawler.tools import utils
 
 
 class XiaoHongShuImage(AbstractStoreImage):

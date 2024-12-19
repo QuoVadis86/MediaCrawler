@@ -12,14 +12,14 @@
 # 基础配置
 PLATFORM = "xhs"
 KEYWORDS = "编程副业,编程兼职"  # 关键词搜索配置，以英文逗号分隔
-LOGIN_TYPE = "qrcode"  # qrcode or phone or cookie
-COOKIES = ""
+LOGIN_TYPE = "cookie"  # qrcode or phone or cookie
+COOKIES = "abRequestId=55cbdaeb-dcc8-5d83-a1ad-557e427070d9; a1=193ce6c7fd3syn7t7ur2fun5m95jdlgol5d89t27w30000226136; webId=3e4ce7abbe2204ed61cc9329c0e6ecc7; gid=yjqSdKSYfd1YyjqSdKSWi29JfqMvIW9W7FJifWE7I26j2Yq8Vf1klj888JJKyqK8KJ0SYSSY; web_session=040069b63c5f10008f083a936a354bc257b13a; webBuild=4.48.0; x-user-id-creator.xiaohongshu.com=67481c58000000001402df5e; customer-sso-sid=68c51744969882338485060806f8761a2c85b91f; customerClientId=388586042303190; access-token-creator.xiaohongshu.com=customer.creator.AT-68c517449698823384850609p8nl1tszfueglpjn; galaxy_creator_session_id=6OdIilJuiAHR5sCvOmF3B4poma9csMib7oKo; galaxy.creator.beaker.session.id=1734518172716089345678; acw_tc=0a4ad9c917345757683468938e4bc0c72c81ac1adb956082206c1c8ad1d77e; websectiga=29098a4cf41f76ee3f8db19051aaa60c0fc7c5e305572fec762da32d457d76ae; sec_poison_id=559f105a-7edc-41ba-a845-bef5e5f09517; xsecappid=xhs-pc-web; unread={%22ub%22:%226756adf90000000001029073%22%2C%22ue%22:%22675d01d10000000002036d41%22%2C%22uc%22:19}"
 # 具体值参见media_platform.xxx.field下的枚举值，暂时只支持小红书
 SORT_TYPE = "popularity_descending"
 # 具体值参见media_platform.xxx.field下的枚举值，暂时只支持抖音
 PUBLISH_TIME_TYPE = 0
 CRAWLER_TYPE = (
-    "search"  # 爬取类型，search(关键词搜索) | detail(帖子详情)| creator(创作者主页数据)
+    "creator"  # 爬取类型，search(关键词搜索) | detail(帖子详情)| creator(创作者主页数据)
 )
 
 # 是否开启 IP 代理
@@ -35,7 +35,7 @@ IP_PROXY_PROVIDER_NAME = "kuaidaili"
 # 设置False会打开一个浏览器
 # 小红书如果一直扫码登录不通过，打开浏览器手动过一下滑动验证码
 # 抖音如果一直提示失败，打开浏览器看下是否扫码登录之后出现了手机号验证，如果出现了手动过一下再试。
-HEADLESS = False
+HEADLESS = True
 
 # 是否保存登录状态
 SAVE_LOGIN_STATE = True

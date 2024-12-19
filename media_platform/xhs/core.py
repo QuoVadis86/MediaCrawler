@@ -18,14 +18,14 @@ from typing import Dict, List, Optional, Tuple
 from playwright.async_api import BrowserContext, BrowserType, Page, async_playwright
 from tenacity import RetryError
 
-import config
-from base.base_crawler import AbstractCrawler
-from config import CRAWLER_MAX_COMMENTS_COUNT_SINGLENOTES
-from model.m_xiaohongshu import NoteUrlInfo
-from proxy.proxy_ip_pool import IpInfoModel, create_ip_pool
-from store import xhs as xhs_store
-from tools import utils
-from var import crawler_type_var, source_keyword_var
+import spider.MediaCrawler.config as config
+from spider.MediaCrawler.base.base_crawler import AbstractCrawler
+from spider.MediaCrawler.config import CRAWLER_MAX_COMMENTS_COUNT_SINGLENOTES
+from spider.MediaCrawler.model.m_xiaohongshu import NoteUrlInfo
+from spider.MediaCrawler.proxy.proxy_ip_pool import IpInfoModel, create_ip_pool
+from spider.MediaCrawler.store import xhs as xhs_store
+from spider.MediaCrawler.tools import utils
+from spider.MediaCrawler.var import crawler_type_var, source_keyword_var
 
 from .client import XiaoHongShuClient
 from .exception import DataFetchError
@@ -44,7 +44,7 @@ class XiaoHongShuCrawler(AbstractCrawler):
         # self.user_agent = utils.get_user_agent()
         self.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 
-    async def start(self) -> None:
+    async def start(self,func:callable,**kwargs) -> None:
         playwright_proxy_format, httpx_proxy_format = None, None
         if config.ENABLE_IP_PROXY:
             ip_proxy_pool = await create_ip_pool(
@@ -62,7 +62,7 @@ class XiaoHongShuCrawler(AbstractCrawler):
                 chromium, None, self.user_agent, headless=config.HEADLESS
             )
             # stealth.min.js is a js script to prevent the website from detecting the crawler.
-            await self.browser_context.add_init_script(path="libs/stealth.min.js")
+            await self.browser_context.add_init_script(path="spider/MediaCrawler/libs/stealth.min.js")
             # add a cookie attribute webId to avoid the appearance of a sliding captcha on the webpage
             await self.browser_context.add_cookies(
                 [
@@ -82,7 +82,7 @@ class XiaoHongShuCrawler(AbstractCrawler):
             if not await self.xhs_client.pong():
                 login_obj = XiaoHongShuLogin(
                     login_type=config.LOGIN_TYPE,
-                    login_phone="",  # input your phone number
+                    login_phone="13107126910",  # input your phone number
                     browser_context=self.browser_context,
                     context_page=self.context_page,
                     cookie_str=config.COOKIES,
@@ -92,20 +92,21 @@ class XiaoHongShuCrawler(AbstractCrawler):
                     browser_context=self.browser_context
                 )
 
-            crawler_type_var.set(config.CRAWLER_TYPE)
-            if config.CRAWLER_TYPE == "search":
-                # Search for notes and retrieve their comment information.
-                await self.search()
-            elif config.CRAWLER_TYPE == "detail":
-                # Get the information and comments of the specified post
-                await self.get_specified_notes()
-            elif config.CRAWLER_TYPE == "creator":
-                # Get creator's information and their notes and comments
-                await self.get_creators_and_notes()
-            else:
-                pass
-
+            # crawler_type_var.set(config.CRAWLER_TYPE)
+            # if config.CRAWLER_TYPE == "search":
+            #     # Search for notes and retrieve their comment information.
+            #     await self.search()
+            # elif config.CRAWLER_TYPE == "detail":
+            #     # Get the information and comments of the specified post
+            #     await self.get_specified_notes()
+            # elif config.CRAWLER_TYPE == "creator":
+            #     # Get creator's information and their notes and comments
+            #     await self.get_creators_and_notes()
+            # else:
+            #     pass
             utils.logger.info("[XiaoHongShuCrawler.start] Xhs Crawler finished ...")
+            await func(**kwargs)
+
 
     async def search(self) -> None:
         """Search for notes and retrieve their comment information."""
@@ -180,28 +181,45 @@ class XiaoHongShuCrawler(AbstractCrawler):
                     )
                     break
 
-    async def get_creators_and_notes(self) -> None:
+    async def get_creators_and_notes(self,user_id) -> None:
         """Get creator's notes and retrieve their comment information."""
         utils.logger.info(
             "[XiaoHongShuCrawler.get_creators_and_notes] Begin get xiaohongshu creators"
         )
-        for user_id in config.XHS_CREATOR_ID_LIST:
-            # get creator detail info from web html content
-            createor_info: Dict = await self.xhs_client.get_creator_info(
-                user_id=user_id
-            )
-            if createor_info:
-                await xhs_store.save_creator(user_id, creator=createor_info)
+        print("===========================",user_id)
+        
+        creator_info: Dict = await self.xhs_client.get_creator_info(user_id=user_id)
+        print("-----------creator---info",creator_info)
 
-            # Get all note information of the creator
-            all_notes_list = await self.xhs_client.get_all_notes_by_creator(
-                user_id=user_id,
-                crawl_interval=random.random(),
-                callback=self.fetch_creator_notes_detail,
-            )
+        all_notes_list = await self.xhs_client.get_all_notes_by_creator(
+            user_id=user_id,
+            crawl_interval=random.random(),
+            callback=self.fetch_creator_notes_detail,
+        )
+        print("all------notes-----",all_notes_list)
+        return creator_info,all_notes_list
+    # async def get_creators_and_notes(self) -> None:
+    #     """Get creator's notes and retrieve their comment information."""
+    #     utils.logger.info(
+    #         "[XiaoHongShuCrawler.get_creators_and_notes] Begin get xiaohongshu creators"
+    #     )
+    #     for user_id in config.XHS_CREATOR_ID_LIST:
+    #         # get creator detail info from web html content
+    #         createor_info: Dict = await self.xhs_client.get_creator_info(
+    #             user_id=user_id
+    #         )
+    #         if createor_info:
+    #             await xhs_store.save_creator(user_id, creator=createor_info)
 
-            note_ids = [note_item.get("note_id") for note_item in all_notes_list]
-            await self.batch_get_note_comments(note_ids)
+    #         # Get all note information of the creator
+    #         all_notes_list = await self.xhs_client.get_all_notes_by_creator(
+    #             user_id=user_id,
+    #             crawl_interval=random.random(),
+    #             callback=self.fetch_creator_notes_detail,
+    #         )
+
+    #         note_ids = [note_item.get("note_id") for note_item in all_notes_list]
+    #         await self.batch_get_note_comments(note_ids)
 
     async def fetch_creator_notes_detail(self, note_list: List[Dict]):
         """

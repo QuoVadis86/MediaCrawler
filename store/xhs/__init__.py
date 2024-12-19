@@ -15,8 +15,8 @@
 # @Desc    :
 from typing import List
 
-import config
-from var import source_keyword_var
+import spider.MediaCrawler.config as config
+from spider.MediaCrawler.var import source_keyword_var
 
 from . import xhs_store_impl
 from .xhs_store_image import *

@@ -19,9 +19,9 @@ import httpx
 from playwright.async_api import BrowserContext, Page
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_result
 
-import config
-from base.base_crawler import AbstractApiClient
-from tools import utils
+import spider.MediaCrawler.config as config
+from spider.MediaCrawler.base.base_crawler import AbstractApiClient
+from spider.MediaCrawler.tools import utils
 from html import unescape
 
 from .exception import DataFetchError, IPBlockError
@@ -416,6 +416,7 @@ class XiaoHongShuClient(AbstractApiClient):
         match = re.search(
             r"<script>window.__INITIAL_STATE__=(.+)<\/script>", html_content, re.M
         )
+        print("======content===========",html_content)
 
         if match is None:
             return {}

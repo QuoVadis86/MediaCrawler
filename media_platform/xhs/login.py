@@ -18,10 +18,10 @@ from playwright.async_api import BrowserContext, Page
 from tenacity import (RetryError, retry, retry_if_result, stop_after_attempt,
                       wait_fixed)
 
-import config
-from base.base_crawler import AbstractLogin
-from cache.cache_factory import CacheFactory
-from tools import utils
+import spider.MediaCrawler.config as config
+from spider.MediaCrawler.base.base_crawler import AbstractLogin
+from spider.MediaCrawler.cache.cache_factory import CacheFactory
+from spider.MediaCrawler.tools import utils
 
 
 class XiaoHongShuLogin(AbstractLogin):

@@ -15,7 +15,7 @@ from typing import List
 
 import aiomysql
 
-from async_db import AsyncMysqlDB
+from spider.MediaCrawler.async_db import AsyncMysqlDB
 
 request_keyword_var: ContextVar[str] = ContextVar("request_keyword", default="")
 crawler_type_var: ContextVar[str] = ContextVar("crawler_type", default="")

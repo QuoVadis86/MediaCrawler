@@ -18,10 +18,10 @@ import json
 from abc import ABC, abstractmethod
 from typing import List
 
-import config
-from cache.abs_cache import AbstractCache
-from cache.cache_factory import CacheFactory
-from tools.utils import utils
+import spider.MediaCrawler.config as config
+from spider.MediaCrawler.cache.abs_cache import AbstractCache
+from spider.MediaCrawler.cache.cache_factory import CacheFactory
+from spider.MediaCrawler.tools.utils import utils
 
 from .types import IpInfoModel
 

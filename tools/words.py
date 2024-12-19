@@ -19,8 +19,8 @@ import jieba
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
-import config
-from tools import utils
+import spider.MediaCrawler.config as config
+from spider.MediaCrawler.tools import utils
 
 plot_lock = asyncio.Lock()
 

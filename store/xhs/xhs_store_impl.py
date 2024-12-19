@@ -22,10 +22,10 @@ from typing import Dict
 
 import aiofiles
 
-import config
-from base.base_crawler import AbstractStore
-from tools import utils, words
-from var import crawler_type_var
+import spider.MediaCrawler.config
+from spider.MediaCrawler.base.base_crawler import AbstractStore
+from spider.MediaCrawler.tools import utils, words
+from spider.MediaCrawler.var import crawler_type_var
 
 
 def calculate_number_of_files(file_store_path: str) -> int:
@@ -177,7 +177,7 @@ class XhsJsonStoreImplement(AbstractStore):
     words_store_path: str = "data/xhs/words"
     lock = asyncio.Lock()
     file_count:int=calculate_number_of_files(json_store_path)
-    WordCloud = words.AsyncWordCloudGenerator()
+    # WordCloud = words.AsyncWordCloudGenerator()
 
     def make_save_file_name(self, store_type: str) -> (str,str):
         """
